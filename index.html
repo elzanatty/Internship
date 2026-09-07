@@ -641,6 +641,10 @@ async function submitForm(){
   try {
     await fetch(GOOGLE_SCRIPT_URL, {
       method: 'POST',
+      mode: 'no-cors', // <--- This prevents the browser from blocking the Google redirect
+      headers: {
+        'Content-Type': 'text/plain', 
+      },
       body: JSON.stringify(record)
     });
     renderSuccess();
