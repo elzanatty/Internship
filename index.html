@@ -620,17 +620,36 @@ async function submitForm(){
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
   btn.textContent = "Submitting...";
+  
   const record = {
-    ...state,
-    submittedAt: new Date().toISOString()
+    name: state.name,
+    email: state.email,
+    phone: state.phone,
+    university: state.university,
+    gradYear: state.gradYear,
+    platforms: state.platforms,
+    experience: state.experience,
+    experienceDetail: state.experienceDetail,
+    portfolio: state.portfolio,
+    whyJoin: state.whyJoin,
+    puzzleScore: state.puzzleScore
   };
-  const key = 'applicants:' + Date.now() + '-' + state.name.toLowerCase().replace(/[^a-z0-9]+/g,'-');
-  try{
-    await window.storage.set(key, JSON.stringify(record), true);
-  }catch(e){
-    console.error('Storage error', e);
+
+  // IMPORTANT: Replace this string with the URL you generated in Google Apps Script
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxXOIfUYV7HRgsYbTthIPa6D-yCayJ714mWSxWWjXX0s2Qn4pX1dZfJQXJH67CjyPKNPw/exec'; 
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify(record)
+    });
+    renderSuccess();
+  } catch(e) {
+    console.error('Submission error', e);
+    btn.disabled = false;
+    btn.textContent = "Submit Application 🎉";
+    alert("Something went wrong. Please try again.");
   }
-  renderSuccess();
 }
 
 function renderSuccess(){
